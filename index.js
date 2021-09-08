@@ -88,10 +88,44 @@ app.init = async () => {
     }
 
     console.log('');
-    // ** 7. ** _Isspausdinti, visu grybautoju krepseliu kainas(issirikiuojant nuo 
-    //brangiausio link pigiausio krepselio), suapvalinant iki centu_
+    ///** 7. ** _Isspausdinti, visu grybautoju krepseliu kainas(issirikiuojant 
+    //nuo brangiausio link pigiausio krepselio), suapvalinant iki centu
+    sql = 'SELECT `name`, SUM(`count` * `price` * `weight`/ 1000) as amount\
+                FROM`basket`\
+                LEFT JOIN `gatherer`\
+                ON `gatherer`.`id` = `basket`.`gatherer_id`\
+                LEFT JOIN `mushroom`\
+                ON `mushroom`.`id` = `basket`.`mushroom_id`\
+                GROUP BY `basket`.`gatherer_id`\
+                ORDER BY `amount` DESC';
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    console.log(`Grybu krepselio kainos pas grybautoja:`);
+    i = 0;
+    for (const item of rows) {
+        console.log(`${++i}) ${upName(item.name)} - ${+item.amount} EUR`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
+    }
 
+    console.log('');
+    //**8** _Isspausdinti, kiek nuo geriausiai vertinamu iki blogiausiai 
+    //vertinamu grybu yra surinkta. Spausdinima turi atlikti funkcija 
+    //(pavadinimu `mushroomsByRating()`), kuri gauna vieninteli 
+    //parametra - kalbos pavadinima, pagal kuria reikia sugeneruoti rezultata
 
+    async function mushroomsByRating(lang = 'en') {
+        sql = 'SELECT `ratings`.`id`, `name_' + lang + '`, SUM(`count`) as amount\
+    FROM `ratings`\
+    LEFT JOIN `mushroom`\
+    ON `mushroom`.`rating` = `ratings`.`id`\
+    LEFT JOIN `basket`\
+    ON `basket`.`mushroom_id` = `mushroom`.`id`\
+    GROUP BY `ratings`.`id`\
+    ORDER BY `ratings`.`id` DESC';
+        [rows] = await connection.execute(sql);
+        console.log(rows);
+    }
+    const kalbaLt = mushroomsByRating('lt');
+    const kalbaEn = mushroomsByRating('en');
 }
 
 app.init();
