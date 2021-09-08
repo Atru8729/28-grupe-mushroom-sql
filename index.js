@@ -106,7 +106,7 @@ app.init = async () => {
         console.log(`${++i}) ${upName(item.name)} - ${+item.amount} EUR`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
     }
 
-    console.log('');
+    console.log('**********');
     //**8** _Isspausdinti, kiek nuo geriausiai vertinamu iki blogiausiai 
     //vertinamu grybu yra surinkta. Spausdinima turi atlikti funkcija 
     //(pavadinimu `mushroomsByRating()`), kuri gauna vieninteli 
@@ -124,12 +124,12 @@ app.init = async () => {
         [rows] = await connection.execute(sql);
         console.log(rows);
     }
-    const kalbaLt = mushroomsByRating('lt');
-    const kalbaEn = mushroomsByRating('en');
+    await mushroomsByRating('lt');
+    await mushroomsByRating('en');
 
-    console.log('');
+    console.log('***********');
     // ** 9 ** _Isspausdinti, visus grybus, kuriu ivertinimas geresnis 
-    //arba lygus 4 zvaigzdutem, isrikiuotus gereji tvarka_
+    //arba lygus 4 zvaigzdutem, isrikiuotus gerejimo tvarka_
     // pvz.: Grybai: Grybas, Grybas, Grybas.
     sql = 'SELECT `rating`, `mushroom` FROM `mushroom`\
     ORDER BY `rating` ASC';
