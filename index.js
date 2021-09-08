@@ -126,7 +126,24 @@ app.init = async () => {
     }
     const kalbaLt = mushroomsByRating('lt');
     const kalbaEn = mushroomsByRating('en');
+
+    console.log('');
+    // ** 9 ** _Isspausdinti, visus grybus, kuriu ivertinimas geresnis 
+    //arba lygus 4 zvaigzdutem, isrikiuotus gereji tvarka_
+    // pvz.: Grybai: Grybas, Grybas, Grybas.
+    sql = 'SELECT `rating`, `mushroom` FROM `mushroom`\
+    ORDER BY `rating` ASC';
+    [rows] = await connection.execute(sql);
+    let grybai = [];
+    for (let i = 0; i < rows.length; i++) {
+        ratingMushroom = rows[i].rating;
+        if (ratingMushroom >= 4) {
+            grybai.push(upName(rows[i].mushroom));
+        }
+    }
+    console.log(`Grybai: ${grybai.join(', ')}.`);
 }
+
 
 app.init();
 
